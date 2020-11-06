@@ -1,0 +1,41 @@
+import java.io.*;
+
+class Tree
+{
+    private Node root;
+
+    public Tree()
+    {
+        root = null;
+    }
+
+    public void insert(String s)
+    {
+        Conversion c = new Conversion(s);
+        s = c.inToPost();
+        Stack1 stk = new Stack1(s.length());
+        s = s + "#";
+        int i = 0;
+        char symbol = s.charAt(i);
+        Node newNode;
+        while (symbol != '#')
+        {
+            if (symbol >= '0' && symbol <= '9' || symbol >= 'A'
+                    && symbol <= 'Z' || symbol >= 'a' && symbol <= 'z')
+            {
+                newNode = new Node(symbol);
+                stk.push(newNode);
+            } else if (symbol == '+' || symbol == '-' || symbol == '/'
+                    || symbol == '*')
+            {
+                Node ptr1 = stk.pop();
+                Node ptr2 = stk.pop();
+                newNode = new Node(symbol);
+                newNode.leftChild = ptr2;
+                newNode.rightChild = ptr1;
+                stk.push(newNode);
+            }
+            symbol = s.charAt(++i);
+        }
+        root = stk.pop();
+    }

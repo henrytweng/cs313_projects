@@ -1,0 +1,365 @@
+<html>
+<head>
+<title>Polynomial.java</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style type="text/css">
+.s0 { color: #cc7832;}
+.s1 { color: #a9b7c6;}
+.s2 { color: #6a8759;}
+.s3 { color: #6897bb;}
+.s4 { color: #808080;}
+.s5 { color: #629755; font-style: italic;}
+</style>
+</head>
+<body bgcolor="#2b2b2b">
+<table CELLSPACING=0 CELLPADDING=5 COLS=1 WIDTH="100%" BGCOLOR="#606060" >
+<tr><td><center>
+<font face="Arial, Helvetica" color="#000000">
+Polynomial.java</font>
+</center></td></tr></table>
+<pre><span class="s0">import </span><span class="s1">java.util.Scanner</span><span class="s0">;</span>
+
+<span class="s0">public class </span><span class="s1">Polynomial </span><span class="s0">extends </span><span class="s1">PolynomialInterface {</span>
+
+    <span class="s0">private static boolean </span><span class="s1">isValidTerm(String s) {</span>
+        <span class="s1">String pattern = </span><span class="s2">&quot;(.*)[</span><span class="s0">\\</span><span class="s2">D&amp;&amp;[^-+*/^X]](.*)&quot;</span><span class="s0">;</span>
+        <span class="s0">return </span><span class="s1">!(s.matches(pattern))</span><span class="s0">;</span>
+    <span class="s1">}</span>
+
+    <span class="s0">public </span><span class="s1">Polynomial(String s) </span><span class="s0">throws </span><span class="s1">Exception {</span>
+        <span class="s1">s = s.trim().replaceAll(</span><span class="s2">&quot;</span><span class="s0">\\</span><span class="s2">s&quot;</span><span class="s0">, </span><span class="s2">&quot;&quot;</span><span class="s1">).toUpperCase()</span><span class="s0">;</span>
+        <span class="s1">String[] terms = s.split(</span><span class="s2">&quot;(?=</span><span class="s0">\\</span><span class="s2">b[</span><span class="s0">\\</span><span class="s2">+</span><span class="s0">\\</span><span class="s2">-])&quot;</span><span class="s1">)</span><span class="s0">;</span>
+        <span class="s1">Term[] temp = </span><span class="s0">new </span><span class="s1">Term[terms.length]</span><span class="s0">;</span>
+
+        <span class="s0">int </span><span class="s1">maxDegree = </span><span class="s3">0</span><span class="s0">, </span><span class="s1">index = -</span><span class="s3">1</span><span class="s0">;</span>
+        <span class="s0">for </span><span class="s1">(String input: terms) {</span>
+            <span class="s0">if </span><span class="s1">(isValidTerm(input)) {</span>
+                <span class="s1">String coeffStr = </span><span class="s0">null;</span>
+                <span class="s0">double </span><span class="s1">coeff = </span><span class="s3">1.0</span><span class="s0">;</span>
+                <span class="s0">int </span><span class="s1">degree = </span><span class="s3">0</span><span class="s0">;</span>
+                <span class="s0">if </span><span class="s1">(!(input.contains(</span><span class="s2">&quot;X&quot;</span><span class="s1">))) coeffStr = input</span><span class="s0">;</span>
+                <span class="s0">else </span><span class="s1">{</span>
+                    <span class="s0">for </span><span class="s1">(</span><span class="s0">int </span><span class="s1">i = </span><span class="s3">0</span><span class="s0">; </span><span class="s1">i &lt; input.length()</span><span class="s0">; </span><span class="s1">i++) {</span>
+                        <span class="s0">if </span><span class="s1">(input.charAt(i) == </span><span class="s2">'X'</span><span class="s1">) {</span>
+                            <span class="s0">if </span><span class="s1">(i == </span><span class="s3">0</span><span class="s1">) coeffStr = </span><span class="s2">&quot;+&quot;</span><span class="s0">;</span>
+                            <span class="s0">else </span><span class="s1">coeffStr = input.substring(</span><span class="s3">0</span><span class="s0">, </span><span class="s1">i)</span><span class="s0">;</span>
+                            <span class="s0">if </span><span class="s1">(i == input.length() - </span><span class="s3">1</span><span class="s1">) degree = </span><span class="s3">1</span><span class="s0">;</span>
+                        <span class="s1">}</span>
+                        <span class="s0">else if </span><span class="s1">(i &gt;= </span><span class="s3">2 </span><span class="s1">&amp;&amp; input.charAt(i - </span><span class="s3">1</span><span class="s1">) == </span><span class="s2">'^'</span><span class="s1">) {</span>
+                            <span class="s0">try </span><span class="s1">{ degree = Integer.parseInt(input.substring(i))</span><span class="s0">; </span><span class="s1">}</span>
+                            <span class="s0">catch </span><span class="s1">(NumberFormatException e) {</span>
+                                <span class="s1">System.out.println(input + </span><span class="s2">&quot;has invalid degree.&quot;</span><span class="s1">)</span><span class="s0">;</span>
+                                <span class="s1">degree = </span><span class="s3">1</span><span class="s0">;</span>
+                            <span class="s1">}</span>
+                        <span class="s1">}</span>
+                    <span class="s1">}</span>
+                <span class="s1">}</span>
+                <span class="s0">if </span><span class="s1">(coeffStr.equals(</span><span class="s2">&quot;-&quot;</span><span class="s1">)) coeff = -</span><span class="s3">1.0</span><span class="s0">;</span>
+                <span class="s0">else if </span><span class="s1">(coeffStr.equals(</span><span class="s2">&quot;+&quot;</span><span class="s1">))</span><span class="s0">;</span>
+                <span class="s0">else try </span><span class="s1">{</span>
+                    <span class="s1">coeff = Double.parseDouble(coeffStr)</span><span class="s0">;</span>
+                <span class="s1">}</span>
+                <span class="s0">catch </span><span class="s1">(NumberFormatException e) { System.out.println(input + </span><span class="s2">&quot;has invalid coefficient.&quot;</span><span class="s1">)</span><span class="s0">; </span><span class="s1">}</span>
+                <span class="s0">if </span><span class="s1">(degree &gt; maxDegree) maxDegree = degree</span><span class="s0">;</span>
+                <span class="s1">temp[++index] = </span><span class="s0">new </span><span class="s1">Term(coeff</span><span class="s0">, </span><span class="s1">degree)</span><span class="s0">;</span>
+            <span class="s1">}</span>
+        <span class="s1">}</span>
+        <span class="s1">mergeSort(temp</span><span class="s0">, </span><span class="s3">0</span><span class="s0">, </span><span class="s1">index)</span><span class="s0">; </span><span class="s4">// sorted by degree, descending</span>
+        <span class="s4">// Initialize the Polynomial DList</span>
+        <span class="s0">int </span><span class="s1">t = </span><span class="s3">0</span><span class="s0">;</span>
+        <span class="s0">for </span><span class="s1">(</span><span class="s0">int </span><span class="s1">deg = maxDegree</span><span class="s0">; </span><span class="s1">deg &gt;= </span><span class="s3">0</span><span class="s0">; </span><span class="s1">--deg)</span>
+            <span class="s0">if </span><span class="s1">(t &lt;= index &amp;&amp; temp[t].getDegree() == deg) {</span>
+                <span class="s1">data.addLast(temp[t])</span><span class="s0">; </span><span class="s1">++t</span><span class="s0">;</span>
+            <span class="s1">}</span>
+    <span class="s1">}</span>
+
+    <span class="s0">private static void </span><span class="s1">merge (Term[] arr</span><span class="s0">, int </span><span class="s1">i</span><span class="s0">, int </span><span class="s1">j</span><span class="s0">, int </span><span class="s1">k) {</span>
+        <span class="s1">Term[] temp = </span><span class="s0">new </span><span class="s1">Term[k - i + </span><span class="s3">1</span><span class="s1">]</span><span class="s0">;</span>
+        <span class="s0">int </span><span class="s1">m = </span><span class="s3">0</span><span class="s0">, </span><span class="s1">l = i</span><span class="s0">, </span><span class="s1">r = j + </span><span class="s3">1</span><span class="s0">;</span>
+        <span class="s0">while </span><span class="s1">(l &lt;= j &amp;&amp; r &lt;= k) {</span>
+            <span class="s0">if </span><span class="s1">(arr[l].getDegree() &gt;= arr[r].getDegree()) temp[m] = arr[l++]</span><span class="s0">;</span>
+            <span class="s0">else </span><span class="s1">temp[m] = arr[r++]</span><span class="s0">;</span>
+            <span class="s1">++m</span><span class="s0">;</span>
+        <span class="s1">}</span>
+        <span class="s4">// Add remaining terms, if any</span>
+        <span class="s0">while </span><span class="s1">(l &lt;= j) temp[m++] = arr[l++]</span><span class="s0">;</span>
+        <span class="s0">while </span><span class="s1">(r &lt;= k) temp[m++] = arr[r++]</span><span class="s0">;</span>
+        <span class="s0">for </span><span class="s1">(m = </span><span class="s3">0</span><span class="s0">; </span><span class="s1">m &lt; temp.length</span><span class="s0">; </span><span class="s1">++m) arr[i + m] = temp[m]</span><span class="s0">;</span>
+    <span class="s1">}</span>
+
+    <span class="s0">private static void </span><span class="s1">mergeSort(Term[] arr</span><span class="s0">, int </span><span class="s1">i</span><span class="s0">, int </span><span class="s1">k) {</span>
+        <span class="s0">int </span><span class="s1">j = </span><span class="s3">0</span><span class="s0">;</span>
+        <span class="s0">if </span><span class="s1">(i &lt; k) {</span>
+            <span class="s1">j = (i + k) / </span><span class="s3">2</span><span class="s0">;</span>
+            <span class="s1">mergeSort(arr</span><span class="s0">, </span><span class="s1">i</span><span class="s0">, </span><span class="s1">j)</span><span class="s0">;</span>
+            <span class="s1">mergeSort(arr</span><span class="s0">, </span><span class="s1">j + </span><span class="s3">1</span><span class="s0">, </span><span class="s1">k)</span><span class="s0">;</span>
+            <span class="s1">merge(arr</span><span class="s0">, </span><span class="s1">i</span><span class="s0">, </span><span class="s1">j</span><span class="s0">, </span><span class="s1">k)</span><span class="s0">;</span>
+        <span class="s1">}</span>
+    <span class="s1">}</span>
+
+    <span class="s0">private static void </span><span class="s1">clean(PolynomialInterface p) {</span>
+        <span class="s0">try </span><span class="s1">{</span>
+            <span class="s1">DNode&lt;Term&gt; ptr = p.data.getFirst()</span><span class="s0">;</span>
+            <span class="s0">while </span><span class="s1">(ptr != </span><span class="s0">null</span><span class="s1">) {</span>
+                <span class="s0">if </span><span class="s1">(ptr.getData().getCoefficient() == </span><span class="s3">0</span><span class="s1">) p.data.remove(ptr)</span><span class="s0">;</span>
+                <span class="s1">ptr = ptr.getNext()</span><span class="s0">;</span>
+            <span class="s1">}</span>
+        <span class="s1">}</span>
+        <span class="s0">catch </span><span class="s1">(Exception ignored) {}</span><span class="s0">;</span>
+    <span class="s1">}</span>
+
+    <span class="s0">public </span><span class="s1">Polynomial() { </span><span class="s0">super</span><span class="s1">()</span><span class="s0">; </span><span class="s1">}</span>
+
+    <span class="s0">public </span><span class="s1">PolynomialInterface add(PolynomialInterface p) {</span>
+        <span class="s1">PolynomialInterface ans = </span><span class="s0">new </span><span class="s1">Polynomial()</span><span class="s0">;</span>
+        <span class="s0">try </span><span class="s1">{</span>
+            <span class="s1">DNode&lt;Term&gt; leftPtr = </span><span class="s0">this</span><span class="s1">.data.getFirst()</span><span class="s0">, </span><span class="s1">rightPtr = p.data.getFirst()</span><span class="s0">;</span>
+            <span class="s1">Term l</span><span class="s0">,</span><span class="s1">r</span><span class="s0">;</span>
+            <span class="s0">boolean </span><span class="s1">leftIsDone = </span><span class="s0">false, </span><span class="s1">rightIsDone = </span><span class="s0">false;</span>
+
+            <span class="s0">while </span><span class="s1">(leftPtr != </span><span class="s0">null </span><span class="s1">&amp;&amp; rightPtr != </span><span class="s0">null</span><span class="s1">) {</span>
+                <span class="s1">l = leftPtr.getData()</span><span class="s0">;</span>
+                <span class="s1">r = rightPtr.getData()</span><span class="s0">;</span>
+                <span class="s0">if </span><span class="s1">(l.getDegree() &gt; r.getDegree()) {</span>
+                    <span class="s1">ans.data.addLast(</span><span class="s0">new </span><span class="s1">Term(l.getCoefficient()</span><span class="s0">, </span><span class="s1">l.getDegree()))</span><span class="s0">;</span>
+                    <span class="s0">if </span><span class="s1">(leftPtr == </span><span class="s0">this</span><span class="s1">.data.getLast()) {</span>
+                        <span class="s1">leftIsDone = </span><span class="s0">true; break;</span>
+                    <span class="s1">}</span>
+                    <span class="s1">leftPtr = leftPtr.getNext()</span><span class="s0">;</span>
+                <span class="s1">} </span><span class="s0">else if </span><span class="s1">(l.getDegree() == r.getDegree()) {</span>
+                    <span class="s1">ans.data.addLast(</span><span class="s0">new </span><span class="s1">Term(l.getCoefficient() + r.getCoefficient()</span><span class="s0">, </span><span class="s1">l.getDegree()))</span><span class="s0">;</span>
+                    <span class="s0">if </span><span class="s1">(leftPtr == </span><span class="s0">this</span><span class="s1">.data.getLast()) leftIsDone = </span><span class="s0">true;</span>
+                    <span class="s0">else </span><span class="s1">leftPtr = leftPtr.getNext()</span><span class="s0">;</span>
+                    <span class="s0">if </span><span class="s1">(rightPtr == p.data.getLast()) rightIsDone = </span><span class="s0">true;</span>
+                    <span class="s0">else </span><span class="s1">rightPtr = rightPtr.getNext()</span><span class="s0">;</span>
+                    <span class="s0">if </span><span class="s1">(leftIsDone || rightIsDone) </span><span class="s0">break;</span>
+                <span class="s1">} </span><span class="s0">else </span><span class="s1">{</span>
+                    <span class="s1">ans.data.addLast(</span><span class="s0">new </span><span class="s1">Term(r.getCoefficient()</span><span class="s0">, </span><span class="s1">r.getDegree()))</span><span class="s0">;</span>
+                    <span class="s0">if </span><span class="s1">(rightPtr == p.data.getLast()) {</span>
+                        <span class="s1">rightIsDone = </span><span class="s0">true; break;</span>
+                    <span class="s1">}</span>
+                    <span class="s1">rightPtr = rightPtr.getNext()</span><span class="s0">;</span>
+                <span class="s1">}</span>
+            <span class="s1">}</span>
+            <span class="s0">if </span><span class="s1">(rightIsDone &amp;&amp; !leftIsDone)</span>
+                <span class="s0">while </span><span class="s1">(leftPtr != </span><span class="s0">null</span><span class="s1">) {</span>
+                    <span class="s1">l = leftPtr.getData()</span><span class="s0">;</span>
+                    <span class="s1">ans.data.addLast(</span><span class="s0">new </span><span class="s1">Term(l.getCoefficient()</span><span class="s0">, </span><span class="s1">l.getDegree()))</span><span class="s0">;</span>
+                    <span class="s0">if </span><span class="s1">(leftPtr == </span><span class="s0">this</span><span class="s1">.data.getLast()) {</span>
+                        <span class="s1">leftIsDone = </span><span class="s0">true; break;</span>
+                    <span class="s1">}</span>
+                    <span class="s1">leftPtr = leftPtr.getNext()</span><span class="s0">;</span>
+                <span class="s1">}</span>
+            <span class="s0">else if </span><span class="s1">(leftIsDone &amp;&amp; !rightIsDone)</span>
+                <span class="s0">while </span><span class="s1">(rightPtr != </span><span class="s0">null</span><span class="s1">) {</span>
+                    <span class="s1">r = rightPtr.getData()</span><span class="s0">;</span>
+                    <span class="s1">ans.data.addLast(</span><span class="s0">new </span><span class="s1">Term(r.getCoefficient()</span><span class="s0">, </span><span class="s1">r.getDegree()))</span><span class="s0">;</span>
+                    <span class="s0">if </span><span class="s1">(rightPtr == p.data.getLast()) {</span>
+                        <span class="s1">rightIsDone = </span><span class="s0">true; break;</span>
+                    <span class="s1">}</span>
+                    <span class="s1">rightPtr = rightPtr.getNext()</span><span class="s0">;</span>
+                <span class="s1">}</span>
+        <span class="s1">}</span>
+        <span class="s0">catch </span><span class="s1">(Exception ignored) {}</span>
+        <span class="s1">clean(ans)</span><span class="s0">;</span>
+        <span class="s0">return </span><span class="s1">ans</span><span class="s0">;</span>
+    <span class="s1">}</span>
+
+    <span class="s0">public </span><span class="s1">PolynomialInterface subtract(PolynomialInterface p) {</span>
+        <span class="s1">PolynomialInterface ans = </span><span class="s0">new </span><span class="s1">Polynomial()</span><span class="s0">;</span>
+        <span class="s0">try </span><span class="s1">{</span>
+            <span class="s1">DNode&lt;Term&gt; leftPtr = </span><span class="s0">this</span><span class="s1">.data.getFirst()</span><span class="s0">;</span>
+            <span class="s1">DNode&lt;Term&gt; rightPtr = p.data.getFirst()</span><span class="s0">;</span>
+            <span class="s1">Term l</span><span class="s0">,</span><span class="s1">r</span><span class="s0">;</span>
+            <span class="s0">boolean </span><span class="s1">leftIsDone = </span><span class="s0">false, </span><span class="s1">rightIsDone = </span><span class="s0">false;</span>
+
+            <span class="s0">while </span><span class="s1">(leftPtr != </span><span class="s0">null </span><span class="s1">&amp;&amp; rightPtr != </span><span class="s0">null</span><span class="s1">) {</span>
+                <span class="s1">l = leftPtr.getData()</span><span class="s0">;</span>
+                <span class="s1">r = rightPtr.getData()</span><span class="s0">;</span>
+                <span class="s0">if </span><span class="s1">(l.getDegree() &gt; r.getDegree()) {</span>
+                    <span class="s1">ans.data.addLast(</span><span class="s0">new </span><span class="s1">Term(l.getCoefficient()</span><span class="s0">, </span><span class="s1">l.getDegree()))</span><span class="s0">;</span>
+                    <span class="s0">if </span><span class="s1">(leftPtr == </span><span class="s0">this</span><span class="s1">.data.getLast()) {</span>
+                        <span class="s1">leftIsDone = </span><span class="s0">true;</span>
+                        <span class="s0">break;</span>
+                    <span class="s1">}</span>
+                    <span class="s1">leftPtr = leftPtr.getNext()</span><span class="s0">;</span>
+                <span class="s1">} </span><span class="s0">else if </span><span class="s1">(l.getDegree() == r.getDegree()) {</span>
+                    <span class="s1">ans.data.addLast(</span><span class="s0">new </span><span class="s1">Term(l.getCoefficient() - r.getCoefficient()</span><span class="s0">, </span><span class="s1">l.getDegree()))</span><span class="s0">;</span>
+                    <span class="s0">if </span><span class="s1">(leftPtr == </span><span class="s0">this</span><span class="s1">.data.getLast()) leftIsDone = </span><span class="s0">true;</span>
+                    <span class="s0">else </span><span class="s1">leftPtr = leftPtr.getNext()</span><span class="s0">;</span>
+                    <span class="s0">if </span><span class="s1">(rightPtr == p.data.getLast()) rightIsDone = </span><span class="s0">true;</span>
+                    <span class="s0">else </span><span class="s1">rightPtr = rightPtr.getNext()</span><span class="s0">;</span>
+                    <span class="s0">if </span><span class="s1">(leftIsDone || rightIsDone) </span><span class="s0">break;</span>
+
+                <span class="s1">} </span><span class="s0">else </span><span class="s1">{</span>
+                    <span class="s1">ans.data.addLast(</span><span class="s0">new </span><span class="s1">Term(r.getCoefficient() * -</span><span class="s3">1.0</span><span class="s0">, </span><span class="s1">r.getDegree()))</span><span class="s0">;</span>
+                    <span class="s0">if </span><span class="s1">(rightPtr == p.data.getLast()) {</span>
+                        <span class="s1">rightIsDone = </span><span class="s0">true;</span>
+                        <span class="s0">break;</span>
+                    <span class="s1">}</span>
+                    <span class="s1">rightPtr = rightPtr.getNext()</span><span class="s0">;</span>
+                <span class="s1">}</span>
+            <span class="s1">}</span>
+            <span class="s0">if </span><span class="s1">(rightIsDone &amp;&amp; !leftIsDone)</span>
+                <span class="s0">while </span><span class="s1">(leftPtr != </span><span class="s0">null</span><span class="s1">) {</span>
+                    <span class="s1">l = leftPtr.getData()</span><span class="s0">;</span>
+                    <span class="s1">ans.data.addLast(</span><span class="s0">new </span><span class="s1">Term(l.getCoefficient()</span><span class="s0">, </span><span class="s1">l.getDegree()))</span><span class="s0">;</span>
+                    <span class="s0">if </span><span class="s1">(leftPtr == </span><span class="s0">this</span><span class="s1">.data.getLast()) {</span>
+                        <span class="s1">leftIsDone = </span><span class="s0">true;</span>
+                        <span class="s0">break;</span>
+                    <span class="s1">}</span>
+                    <span class="s1">leftPtr = leftPtr.getNext()</span><span class="s0">;</span>
+                <span class="s1">}</span>
+            <span class="s0">else if </span><span class="s1">(leftIsDone &amp;&amp; !rightIsDone)</span>
+                <span class="s0">while </span><span class="s1">(rightPtr != </span><span class="s0">null</span><span class="s1">) {</span>
+                    <span class="s1">r = rightPtr.getData()</span><span class="s0">;</span>
+                    <span class="s1">ans.data.addLast(</span><span class="s0">new </span><span class="s1">Term(r.getCoefficient() * -</span><span class="s3">1.0</span><span class="s0">, </span><span class="s1">r.getDegree()))</span><span class="s0">;</span>
+                    <span class="s0">if </span><span class="s1">(rightPtr == p.data.getLast()) {</span>
+                        <span class="s1">rightIsDone = </span><span class="s0">true;</span>
+                        <span class="s0">break;</span>
+                    <span class="s1">}</span>
+                    <span class="s1">rightPtr = rightPtr.getNext()</span><span class="s0">;</span>
+                <span class="s1">}</span>
+        <span class="s1">}</span>
+        <span class="s0">catch </span><span class="s1">(Exception ignored) {}</span>
+        <span class="s1">clean(ans)</span><span class="s0">;</span>
+        <span class="s0">return </span><span class="s1">ans</span><span class="s0">;</span>
+    <span class="s1">}</span>
+
+    <span class="s0">public </span><span class="s1">PolynomialInterface multiply(PolynomialInterface p) {</span>
+        <span class="s1">PolynomialInterface ans = </span><span class="s0">new </span><span class="s1">Polynomial()</span><span class="s0">;</span>
+        <span class="s0">try </span><span class="s1">{</span>
+            <span class="s1">DNode&lt;Term&gt; leftPtr = </span><span class="s0">this</span><span class="s1">.data.getFirst()</span><span class="s0">, </span><span class="s1">rightPtr = p.data.getFirst()</span><span class="s0">;</span>
+            <span class="s1">Term l = leftPtr.getData()</span><span class="s0">, </span><span class="s1">r = rightPtr.getData()</span><span class="s0">;</span>
+
+            <span class="s1">Term[] prod = </span><span class="s0">new </span><span class="s1">Term[l.getDegree() + r.getDegree() + </span><span class="s3">1</span><span class="s1">]</span><span class="s0">; </span><span class="s4">//array indices correspond to term degree</span>
+            <span class="s0">while </span><span class="s1">(rightPtr != </span><span class="s0">null</span><span class="s1">) {</span>
+                <span class="s1">r = rightPtr.getData()</span><span class="s0">;</span>
+                <span class="s0">if </span><span class="s1">(r.getCoefficient() != </span><span class="s3">0</span><span class="s1">) {</span>
+                    <span class="s0">while </span><span class="s1">(leftPtr != </span><span class="s0">null</span><span class="s1">) {</span>
+                        <span class="s1">l = leftPtr.getData()</span><span class="s0">;</span>
+                        <span class="s0">if </span><span class="s1">(l.getCoefficient() != </span><span class="s3">0</span><span class="s1">) {</span>
+                            <span class="s0">double </span><span class="s1">coeff = l.getCoefficient() * r.getCoefficient()</span><span class="s0">;</span>
+                            <span class="s0">int </span><span class="s1">deg = l.getDegree() + r.getDegree()</span><span class="s0">;</span>
+                            <span class="s0">if </span><span class="s1">(prod[deg] == </span><span class="s0">null</span><span class="s1">) prod[deg] = </span><span class="s0">new </span><span class="s1">Term(coeff</span><span class="s0">, </span><span class="s1">deg)</span><span class="s0">;</span>
+                            <span class="s0">else </span><span class="s1">prod[deg].setCoefficient(prod[deg].getCoefficient() + coeff)</span><span class="s0">;</span>
+                        <span class="s1">}</span>
+                        <span class="s0">if </span><span class="s1">(leftPtr == </span><span class="s0">this</span><span class="s1">.data.getLast()) </span><span class="s0">break;</span>
+                        <span class="s1">leftPtr = leftPtr.getNext()</span><span class="s0">;</span>
+                    <span class="s1">}</span>
+                <span class="s1">}</span>
+                <span class="s1">leftPtr = </span><span class="s0">this</span><span class="s1">.data.getFirst()</span><span class="s0">;</span>
+                <span class="s0">if </span><span class="s1">(rightPtr == p.data.getLast()) </span><span class="s0">break;</span>
+                <span class="s1">rightPtr = rightPtr.getNext()</span><span class="s0">;</span>
+            <span class="s1">}</span>
+            <span class="s0">for </span><span class="s1">(</span><span class="s0">int </span><span class="s1">i = prod.length - </span><span class="s3">1</span><span class="s0">; </span><span class="s1">i &gt;= </span><span class="s3">0</span><span class="s0">; </span><span class="s1">--i)</span>
+                <span class="s0">if </span><span class="s1">(prod[i] != </span><span class="s0">null </span><span class="s1">&amp;&amp; prod[i].getCoefficient() != </span><span class="s3">0</span><span class="s1">) ans.data.addLast(prod[i])</span><span class="s0">;</span>
+        <span class="s1">}</span>
+        <span class="s0">catch </span><span class="s1">(Exception ignored) {  }</span>
+        <span class="s1">clean(ans)</span><span class="s0">;</span>
+        <span class="s0">return </span><span class="s1">ans</span><span class="s0">;</span>
+    <span class="s1">}</span>
+
+    <span class="s0">private static boolean </span><span class="s1">equalsZero(PolynomialInterface p) </span><span class="s0">throws </span><span class="s1">Exception {</span>
+        <span class="s0">if </span><span class="s1">(p.data.isEmpty()) </span><span class="s0">return true;</span>
+        <span class="s1">DNode&lt;Term&gt; ptr = p.data.getFirst()</span><span class="s0">;</span>
+        <span class="s0">while </span><span class="s1">(ptr != </span><span class="s0">null </span><span class="s1">&amp;&amp; ptr.getData().getCoefficient() == </span><span class="s3">0</span><span class="s1">) {</span>
+            <span class="s0">if </span><span class="s1">(ptr == p.data.getLast()) </span><span class="s0">return true;</span>
+            <span class="s1">ptr = ptr.getNext()</span><span class="s0">;</span>
+        <span class="s1">}</span>
+        <span class="s0">return false;</span>
+    <span class="s1">}</span>
+
+    <span class="s0">private static </span><span class="s1">PolynomialInterface copy(PolynomialInterface p) </span><span class="s0">throws </span><span class="s1">Exception {</span>
+        <span class="s1">PolynomialInterface copy = </span><span class="s0">new </span><span class="s1">Polynomial()</span><span class="s0">;</span>
+        <span class="s1">DNode&lt;Term&gt; ptr = p.data.getFirst()</span><span class="s0">;</span>
+        <span class="s0">while </span><span class="s1">(ptr != </span><span class="s0">null</span><span class="s1">) {</span>
+            <span class="s1">copy.data.addLast(ptr.getData())</span><span class="s0">;</span>
+            <span class="s0">if </span><span class="s1">(ptr == p.data.getLast()) </span><span class="s0">break;</span>
+            <span class="s1">ptr = ptr.getNext()</span><span class="s0">;</span>
+        <span class="s1">}</span>
+        <span class="s0">return </span><span class="s1">copy</span><span class="s0">;</span>
+    <span class="s1">}</span>
+
+    <span class="s0">public </span><span class="s1">PolynomialInterface divide(PolynomialInterface p) </span><span class="s0">throws </span><span class="s1">Exception {</span>
+        <span class="s1">PolynomialInterface ans = </span><span class="s0">new </span><span class="s1">Polynomial()</span><span class="s0">;</span>
+            <span class="s0">if </span><span class="s1">(equalsZero(p)) </span><span class="s0">throw new </span><span class="s1">ArithmeticException()</span><span class="s0">;</span>
+            <span class="s1">PolynomialInterface r = copy(</span><span class="s0">this</span><span class="s1">)</span><span class="s0">;</span>
+            <span class="s1">DNode&lt;Term&gt; numPtr = r.data.getFirst()</span><span class="s0">, </span><span class="s1">denPtr = p.data.getFirst()</span><span class="s0">;</span>
+
+            <span class="s4">// based on the Euclidean algorithm : n = dq + r</span>
+            <span class="s0">while </span><span class="s1">(!equalsZero(r) &amp;&amp; numPtr.getData().getDegree() &gt;= denPtr.getData().getDegree()) {</span>
+                <span class="s0">double </span><span class="s1">coeff = numPtr.getData().getCoefficient() / denPtr.getData().getCoefficient()</span><span class="s0">;</span>
+                <span class="s0">int </span><span class="s1">deg = numPtr.getData().getDegree() - denPtr.getData().getDegree()</span><span class="s0">;</span>
+                <span class="s1">Term q = </span><span class="s0">new </span><span class="s1">Term(coeff</span><span class="s0">, </span><span class="s1">deg)</span><span class="s0">;</span>
+                <span class="s1">ans.data.addLast(q)</span><span class="s0">;</span>
+                <span class="s1">PolynomialInterface t = </span><span class="s0">new </span><span class="s1">Polynomial()</span><span class="s0">;</span>
+                <span class="s1">t.data.addLast(q)</span><span class="s0">;</span>
+                <span class="s1">PolynomialInterface td = p.multiply(t)</span><span class="s0">; </span><span class="s4">// r = r - (t * d)</span>
+                <span class="s1">r = r.subtract( td )</span><span class="s0">;</span>
+                <span class="s1">clean(r)</span><span class="s0">;</span>
+                <span class="s0">if </span><span class="s1">(r.data.isEmpty()) </span><span class="s0">break;</span>
+                <span class="s0">else </span><span class="s1">numPtr = r.data.getFirst()</span><span class="s0">;</span>
+            <span class="s1">}</span>
+            <span class="s1">clean(ans)</span><span class="s0">;</span>
+            <span class="s0">return </span><span class="s1">ans</span><span class="s0">;</span>
+    <span class="s1">}</span>
+
+    <span class="s0">public </span><span class="s1">PolynomialInterface remainder(PolynomialInterface p) </span><span class="s0">throws </span><span class="s1">Exception {</span>
+        <span class="s1">PolynomialInterface ans = </span><span class="s0">new </span><span class="s1">Polynomial()</span><span class="s0">;</span>
+        <span class="s0">try </span><span class="s1">{</span>
+            <span class="s0">if </span><span class="s1">(equalsZero(p)) </span><span class="s0">throw new </span><span class="s1">ArithmeticException()</span><span class="s0">;</span>
+            <span class="s1">PolynomialInterface r = copy(</span><span class="s0">this</span><span class="s1">)</span><span class="s0">;</span>
+            <span class="s1">DNode&lt;Term&gt; numPtr = r.data.getFirst()</span><span class="s0">, </span><span class="s1">denPtr = p.data.getFirst()</span><span class="s0">;</span>
+
+            <span class="s0">while </span><span class="s1">(!(equalsZero(r)) &amp;&amp; numPtr.getData().getDegree() &gt;= denPtr.getData().getDegree()) {</span>
+                <span class="s0">double </span><span class="s1">coeff = numPtr.getData().getCoefficient() / denPtr.getData().getCoefficient()</span><span class="s0">;</span>
+                <span class="s0">int </span><span class="s1">deg = numPtr.getData().getDegree() - denPtr.getData().getDegree()</span><span class="s0">;</span>
+                <span class="s1">Term q = </span><span class="s0">new </span><span class="s1">Term(coeff</span><span class="s0">, </span><span class="s1">deg)</span><span class="s0">;</span>
+                <span class="s1">PolynomialInterface t = </span><span class="s0">new </span><span class="s1">Polynomial()</span><span class="s0">;</span>
+                <span class="s1">t.data.addLast(q)</span><span class="s0">;</span>
+                <span class="s1">PolynomialInterface td = p.multiply(t)</span><span class="s0">; </span><span class="s4">// r = r - (t * d)</span>
+                <span class="s1">r = r.subtract( td )</span><span class="s0">;</span>
+                <span class="s1">clean(r)</span><span class="s0">;</span>
+                <span class="s1">numPtr = r.data.getFirst()</span><span class="s0">;</span>
+            <span class="s1">}</span>
+            <span class="s1">ans = r</span><span class="s0">;</span>
+        <span class="s1">}</span>
+        <span class="s0">catch </span><span class="s1">(ArithmeticException e) { System.out.println(</span><span class="s2">&quot;Cannot divide by zero!&quot;</span><span class="s1">)</span><span class="s0">; </span><span class="s1">}</span>
+        <span class="s0">catch </span><span class="s1">(Exception e) { System.out.println(</span><span class="s2">&quot;WARNING: Error in remainder operation.&quot;</span><span class="s1">)</span><span class="s0">; </span><span class="s1">}</span>
+        <span class="s0">return </span><span class="s1">ans</span><span class="s0">;</span>
+    <span class="s1">}</span>
+
+    <span class="s5">/****************</span>
+     <span class="s5">* MAIN FUNCTION</span>
+     <span class="s5">****************/</span>
+    <span class="s0">public static void </span><span class="s1">main(String args[]) </span><span class="s0">throws </span><span class="s1">Exception {</span>
+        <span class="s4">//Variable</span>
+        <span class="s1">PolynomialInterface p</span><span class="s0">, </span><span class="s1">q</span><span class="s0">;</span>
+        <span class="s1">String testInput = </span><span class="s2">&quot;&quot;</span><span class="s0">;</span>
+
+        <span class="s1">p = </span><span class="s0">new </span><span class="s1">Polynomial (</span><span class="s2">&quot;x^3 - x^2 + x + 4&quot;</span><span class="s1">)</span><span class="s0">;</span>
+        <span class="s1">q = </span><span class="s0">new </span><span class="s1">Polynomial(</span><span class="s2">&quot;x^3 + x^2 + x - 6&quot;</span><span class="s1">)</span><span class="s0">;</span>
+        <span class="s1">System.out.println(</span><span class="s2">&quot;Default Input</span><span class="s0">\n</span><span class="s2">***************************&quot;</span><span class="s1">)</span><span class="s0">;</span>
+        <span class="s1">Utility.run(p</span><span class="s0">, </span><span class="s1">q)</span><span class="s0">;</span>
+
+        <span class="s1">Scanner scnr = </span><span class="s0">new </span><span class="s1">Scanner(System.in)</span><span class="s0">;</span>
+        <span class="s0">if</span><span class="s1">(scnr.hasNext()){</span>
+            <span class="s1">testInput = scnr.nextLine()</span><span class="s0">;</span>
+            <span class="s1">p = </span><span class="s0">new </span><span class="s1">Polynomial(testInput)</span><span class="s0">;</span>
+            <span class="s1">testInput = scnr.nextLine()</span><span class="s0">;</span>
+            <span class="s1">q = </span><span class="s0">new </span><span class="s1">Polynomial(testInput)</span><span class="s0">;</span>
+            <span class="s1">System.out.println(</span><span class="s2">&quot;User Input</span><span class="s0">\n</span><span class="s2">***************************&quot;</span><span class="s1">)</span><span class="s0">;</span>
+            <span class="s1">Utility.run(p</span><span class="s0">, </span><span class="s1">q)</span><span class="s0">;</span>
+        <span class="s1">}</span>
+        <span class="s4">//Default test case</span>
+        <span class="s0">else</span><span class="s1">{</span>
+            <span class="s1">p = </span><span class="s0">new </span><span class="s1">Polynomial(</span><span class="s2">&quot; X^5&quot;</span><span class="s1">)</span><span class="s0">;</span>
+            <span class="s1">q = </span><span class="s0">new </span><span class="s1">Polynomial(</span><span class="s2">&quot;X^2 - X + 1&quot;</span><span class="s1">)</span><span class="s0">;</span>
+            <span class="s1">System.out.println(</span><span class="s2">&quot;Default Input</span><span class="s0">\n</span><span class="s2">***************************&quot;</span><span class="s1">)</span><span class="s0">;</span>
+            <span class="s1">Utility.run(p</span><span class="s0">, </span><span class="s1">q)</span><span class="s0">;</span>
+        <span class="s1">}</span>
+    <span class="s1">}</span>
+<span class="s1">}</span></pre>
+</body>
+</html>
